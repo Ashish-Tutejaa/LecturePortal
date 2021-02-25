@@ -1,38 +1,80 @@
-.App {
-  text-align: center;
+@import url("https://fonts.googleapis.com/css2?family=B612&display=swap");
+body,
+html,
+#root {
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+  font-size: 18px;
+  font-family: "B612", sans-serif;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.body-wrapper {
+  height: 100%;
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-flow: row nowrap;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  background-color: #eeeeee;
+  font-family: inherit;
 }
 
-.App-link {
-  color: #61dafb;
+.authPanel {
+  width: 90%;
+  height: 60%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+}
+.authPanel h3 {
+  margin: 0px;
+  margin-top: 15px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.signup {
+  width: 25%;
+  height: 100%;
+  background-color: white;
+  border-radius: 5px;
+  padding-left: 50px;
+  border: 1px solid rgba(68, 68, 199);
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  font-family: inherit;
+  border-left: none;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  overflow: visible;
+  position: relative;
+}
+.signup::before {
+  content: "";
+  position: absolute;
+  top: 10%;
+  left: 0px;
+  width: 1px;
+  height: 80%;
+  background-color: rgb(226, 226, 226);
+}
+
+.login {
+  width: 25%;
+  height: 100%;
+  background-color: white;
+  border-radius: 5px;
+  padding-left: 50px;
+  border: 1px solid rgb(68, 68, 199);
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  font-family: inherit;
+  border-right: none;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
 }
