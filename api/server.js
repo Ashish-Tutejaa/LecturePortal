@@ -3,9 +3,8 @@ const axios = require('axios');
 const bodyParser = require('body-parser');
 const port = 5000;
 const app = express();
-const key = '52307914a6a34c92bdac8718910a2db8';
-const ep =
-	'https://eastus.api.cognitive.microsoft.com/face/v1.0/detect?returnFaceId=true&returnFaceLandmarks=false&recognitionModel=recognition_03&returnRecognitionModel=false&detectionModel=detection_03&faceIdTimeToLive=86400';
+const key = require('config.js')['OCIM_KEY'];
+const ep = require('config.js')['END_POINT'];
 
 const CORS = (req, res, next) => {
 	res.set({
