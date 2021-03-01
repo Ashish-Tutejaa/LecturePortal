@@ -1,8 +1,13 @@
-import React, { useRef } from 'react';
+import React, { useRef,useState } from 'react';
 import { TextField, Button } from '@material-ui/core';
 
 export const Login = () => {
 	const fileRef = useRef<HTMLInputElement | null>(null);
+	const signInRef = useRef<HTMLDivElement | null>(null);
+	const signUpRef = useRef<HTMLDivElement | null>(null);
+	const [signUpuName,setSignUpuName] = useState("");
+	const [signUpPass, setSignUpPass] = useState("");
+	const [signUpCPass, setSignUpCPass] = useState("");
 
 	const textStyles = {
 		width: '70%',
@@ -10,15 +15,17 @@ export const Login = () => {
 	};
 	return (
 		<div className="authPanel">
-			<div className="login">
+			<div ref={signInRef} className="login">
 				<h3>Sign In</h3>
 				<TextField style={textStyles} label="Username" />
 				<TextField style={textStyles} label="Password" />
 				<Button style={{ margin: '30px 0px' }} size="small" variant="outlined" color="primary" children="sign in" />
 			</div>
-			<div className="signup">
+			<div ref={signUpRef} className="signup">
 				<h3>Sign Up</h3>
-				<TextField style={textStyles} label="Username" />
+				<TextField value={signUpuName} onChange={(e) => {
+					setSignUpuName(e.target.value);
+				}} style={textStyles} label="Username" />
 				<TextField style={textStyles} label="Password" />
 				<TextField style={textStyles} label="Confirm Password" />
 				<Button
@@ -37,12 +44,19 @@ export const Login = () => {
 				<Button
 					type="submit"
 					onClick={e => {
-						if (fileRef.current !== null && fileRef.current.files !== null) {
+						if (signUpRef.current !== null && fileRef.current !== null && fileRef.current.files !== null) {
+							console.log(signUpRef.current.childNodes);
+							console.log(signUpuName);
+							let childDivs = Array.from(signUpRef.current.childNodes).filter((ele) => {
+								console.log(ele.nodeType)
+									return (ele as HTMLDivElement).tagName === 'DIV';
+							}); 
+							// console.log(childDivs[0].textContent);
 							const file = fileRef.current.files[0];
 							console.log(fileRef.current.files);
 							(async () => {
 								let buffer = await file.arrayBuffer();
-								fetch('http://localhost:5000/getData', {
+								fetch(`http://localhost:5000/data`, {
 									method: 'POST',
 									headers: {
 										'Content-Type': 'application/octet-stream',
