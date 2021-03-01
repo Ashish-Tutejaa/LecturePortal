@@ -3,8 +3,9 @@ const axios = require('axios');
 const bodyParser = require('body-parser');
 const port = 5000;
 const app = express();
-const key = require('config.js')['OCIM_KEY'];
-const ep = require('config.js')['END_POINT'];
+// const key = require('config.js')['OCIM_KEY'];
+// const ep = require('config.js')['END_POINT'];
+const router = require("./router");
 
 const CORS = (req, res, next) => {
 	res.set({
@@ -22,6 +23,7 @@ app.use(
 	})
 );
 
+app.use("/",router);
 app.options('/getData', CORS);
 
 app.post('/getData', CORS, (req, res) => {
