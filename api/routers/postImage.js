@@ -3,7 +3,9 @@ const mongoose = require('mongoose');
 const axios = require('axios');
 const key = require('../config.js')['OCIM_KEY'];
 const ep = require('../config.js')['END_POINT'];
-const userModel = require('../models/user');
+const Person = require('../models/user');
+const multer = require('multer');
+var upload = multer();
 
 //MAKE ROUTER
 const router = express.Router();
@@ -13,12 +15,13 @@ mongoose.connect('mongodb+srv://tuteja:tuteja123@mern.1ft2r.mongodb.net/MERN', {
 	console.log('DB_CONNECTED');
 });
 
-router.post('/', (req, res) => {
-	let buffer = req.body;
-	let buffer_view = new Uint8Array(buffer);
-	console.log(req.headers);
-	console.log(buffer.byteLength);
-	console.log(req.query);
+router.post('/', upload.single('buffer'), (req, res) => {
+	console.log(req.body.uname, req.body.pass);
+	console.log(req.file);
+
+	console.log(req.file.buffer.buffer);
+	let arrayBuffer = req.file.buffer.buffer;
+	let u8arr = new Uint8Array(arrayBuffer);
 	// axios({
 	// 	method: 'POST',
 	// 	url: ep,

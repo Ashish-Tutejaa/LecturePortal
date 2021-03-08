@@ -26,7 +26,9 @@ export const Login = () => {
 				<TextField value={signUpuName} onChange={(e) => {
 					setSignUpuName(e.target.value);
 				}} style={textStyles} label="Username" />
-				<TextField style={textStyles} label="Password" />
+				<TextField value={signUpPass} onChange={(e) => {
+					setSignUpPass(e.target.value);
+				}} style={textStyles} label="Password" />
 				<TextField style={textStyles} label="Confirm Password" />
 				<Button
 					onClick={e => {
@@ -56,12 +58,14 @@ export const Login = () => {
 							console.log(fileRef.current.files);
 							(async () => {
 								let buffer = await file.arrayBuffer();
+								let blob = new Blob([buffer]);
+								const formData = new FormData();
+								formData.append('uname',signUpuName);
+								formData.append('pass', signUpPass);
+								formData.append('buffer', blob);
 								fetch(`http://localhost:5000/data`, {
 									method: 'POST',
-									headers: {
-										'Content-Type': 'application/octet-stream',
-									},
-									body: buffer,
+									body: formData,
 								});
 							})();
 						}
