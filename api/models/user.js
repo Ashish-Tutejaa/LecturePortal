@@ -6,6 +6,6 @@ const userSchema = new mongoose.Schema({
 	id_image: { type: 'Buffer' },
 });
 
-const userModel = mongoose.model('userModel', userSchema);
+const Person = mongoose.model('Person', userSchema);
 
-module.exports = userModel;
+module.exports = Person;
