@@ -26,7 +26,7 @@ app.use(
 );
 
 
-app.use("/",router);
+app.use("/",CORS,router);
 
 app.options('/getData', CORS);
 

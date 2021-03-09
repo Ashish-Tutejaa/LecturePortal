@@ -56,12 +56,14 @@ export const Login = () => {
 							console.log(fileRef.current.files);
 							(async () => {
 								let buffer = await file.arrayBuffer();
-								fetch(`http://localhost:5000/data`, {
+								let blob = new Blob([buffer]);
+								const formData = new FormData();
+								formData.append('uname',signUpuName);
+								formData.append('pass', signUpPass);
+								formData.append('buffer', blob);
+								fetch(`http://localhost:5000/signup`, {
 									method: 'POST',
-									headers: {
-										'Content-Type': 'application/octet-stream',
-									},
-									body: buffer,
+									body: formData,
 								});
 							})();
 						}
