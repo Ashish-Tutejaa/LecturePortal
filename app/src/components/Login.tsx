@@ -1,11 +1,11 @@
-import React, { useRef,useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { TextField, Button } from '@material-ui/core';
 
 export const Login = () => {
 	const fileRef = useRef<HTMLInputElement | null>(null);
 	const signInRef = useRef<HTMLDivElement | null>(null);
 	const signUpRef = useRef<HTMLDivElement | null>(null);
-	const [signUpuName,setSignUpuName] = useState("");
+	const [signUpuName, setSignUpuName] = useState("");
 	const [signUpPass, setSignUpPass] = useState("");
 	const [signUpCPass, setSignUpCPass] = useState("");
 
@@ -49,8 +49,8 @@ export const Login = () => {
 							console.log(signUpuName);
 							let childDivs = Array.from(signUpRef.current.childNodes).filter((ele) => {
 								console.log(ele.nodeType)
-									return (ele as HTMLDivElement).tagName === 'DIV';
-							}); 
+								return (ele as HTMLDivElement).tagName === 'DIV';
+							});
 							// console.log(childDivs[0].textContent);
 							const file = fileRef.current.files[0];
 							console.log(fileRef.current.files);
@@ -58,10 +58,10 @@ export const Login = () => {
 								let buffer = await file.arrayBuffer();
 								let blob = new Blob([buffer]);
 								const formData = new FormData();
-								formData.append('uname',signUpuName);
+								formData.append('uname', signUpuName);
 								formData.append('pass', signUpPass);
 								formData.append('buffer', blob);
-								fetch(`http://localhost:5000/signup`, {
+								fetch(`http://localhost:5000/auth/signup`, {
 									method: 'POST',
 									body: formData,
 								});
