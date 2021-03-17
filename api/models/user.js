@@ -3,7 +3,7 @@ const passportLocalMongoose = require('passport-local-mongoose');
 
 const userSchema = new mongoose.Schema({
 	
-	id_image: { type: 'Buffer',required:true },
+	id_image: { contentType: 'string',data:"buffer" },
 });
 
 

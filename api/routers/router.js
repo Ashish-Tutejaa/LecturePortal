@@ -5,53 +5,68 @@ const User = require('../../api/models/user');
 const passport = require('passport');
 const multer = require('multer');
 var upload = multer();
-// Connecting to Database
-
-mongoose.connect("mongodb+srv://tuteja:tuteja123@mern.1ft2r.mongodb.net/MERN")
 
 
-// GET /login
+//@route GET /home
+//@desc Displays Home
+ 
+router.get('/home', (req,res)=>{
 
-router.get("/login", (req,res)=>{
-    // const {username,password} = req.params;
+    if(!req.isAuthenticated())
+    {
+        console.log("Login first");
+        return res.send("Login First");
+    }
+    console.log("IN HOME")
+    
+    //Render HomePage Here
 
-    // //Authenticate
-    // // if()
-    // const newUser = new user({
-    //     user_name:"joban",
-    //     password:"Joban@12345"
-    // });
 
-    // // newUser.save();
-    // user.find({},(err,docs)=>console.log(docs))
+    res.status(200).end();
+})
+// router.get('/login',(req,res)=>{
+//     res.send("Login again");
+// })
 
-    res.send("the login")
+// @route POST /login
+// @desc log in a user
+router.post('/login', passport.authenticate('local', {failureRedirect: '/login' }), (req, res) => {
+
+    console.log("logged in");
+    res.redirect('/home');
+    // res.send('THIS IS HOME')
 })
 
 
-router.post("/signup",upload.single('buffer'), async (req, res, next) => {
-    try {
-        console.log(req.body);
-        const {uname, pass } = req.body;
-        let arrayBuffer = req.file.buffer.buffer;
-	    let image = new Uint8Array(arrayBuffer);
-        const username = uname;
-        const user = new User({ image, username });
-        console.log("registering");
+// @route POST /signup
+// @desc signup a new user
 
+router.post("/signup", upload.single('buffer'), async (req, res, next) => {
+    try {
+        
+        // Creating new user 
+        const { uname, pass } = req.body;
+        let arrayBuffer = req.file.buffer.buffer;
+        let id_image = new Uint8Array(arrayBuffer);
+        const username = uname;
+        const user = new User({ id_image, username });
+        
+        //Registering new user in Database
         const registeredUser = await User.register(user, pass);
-        console.log("registered");
+        
         req.login(registeredUser, err => {
-            if (err)
-            {
+            if (err) {
                 console.log(err);
             }
-            // req.flash('success', 'Welcome to Yelp Camp!');
-            res.redirect('/login');
+            
+            // res.status(200).end();
+
+            res.redirect("/home");
         })
     } catch (e) {
-        // req.flash('error', e.message);
-        console.log(res.status,e.message);
+        
+        console.log(res.status, e.message);
+        res.redirect('/signup');
     }
 });
 

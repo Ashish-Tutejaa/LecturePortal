@@ -26,7 +26,9 @@ export const Login = () => {
 				<TextField value={signUpuName} onChange={(e) => {
 					setSignUpuName(e.target.value);
 				}} style={textStyles} label="Username" />
-				<TextField style={textStyles} label="Password" />
+				<TextField value={signUpPass} onChange={(e) => {
+					setSignUpPass(e.target.value);
+				}} style={textStyles} label="Password" />
 				<TextField style={textStyles} label="Confirm Password" />
 				<Button
 					onClick={e => {
@@ -79,4 +81,3 @@ export const Login = () => {
 		</div>
 	);
 };
-

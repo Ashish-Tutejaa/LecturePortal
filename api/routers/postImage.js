@@ -1,24 +1,36 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const axios = require('axios');
-// const key = require('../config.js')['OCIM_KEY'];
-// const ep = require('../config.js')['END_POINT'];
+const key = require('../../config.js')['OCIM_KEY'];
+const ep = require('../../config.js')['END_POINT'];
 const userModel = require('../models/user');
 
 //MAKE ROUTER
 const router = express.Router();
 
-//MONGOOSE CONNECT
+// MONGOOSE CONNECT
 // mongoose.connect('mongodb+srv://tuteja:tuteja123@mern.1ft2r.mongodb.net/MERN', { useNewUrlParser: true, useUnifiedTopology: true }, () => {
 // 	console.log('DB_CONNECTED');
 // });
 
-router.post('/', (req, res) => {
-	let buffer = req.body;
-	let buffer_view = new Uint8Array(buffer);
-	console.log(req.headers);
-	console.log(buffer.byteLength);
-	console.log(req.query);
+router.get('/', async (req, res) => {
+
+	let user = await userModel.find({username:"obama"});
+	
+	let buffer_view = new Uint8Array(user[0].id_image.data.buffer);
+
+	if(buffer_view == user[0].id_image.data.buffer )
+	{
+		console.log("YES");
+	}
+	else
+	{
+		console.log("NO");
+	}
+
+	console.log(buffer_view,user[0].id_image.data.buffer);
+
+
 	// axios({
 	// 	method: 'POST',
 	// 	url: ep,
