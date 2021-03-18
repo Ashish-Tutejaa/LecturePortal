@@ -1,7 +1,13 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useContext } from 'react';
 import { TextField, Button } from '@material-ui/core';
+import { GuidingContext } from '../Navigator';
 
-export const Login = () => {
+interface toLogin {
+	href: string;
+}
+
+export const Login = (props: toLogin) => {
+	const Guide = useContext(GuidingContext);
 	const fileRef = useRef<HTMLInputElement | null>(null);
 	const signInRef = useRef<HTMLDivElement | null>(null);
 	const signUpRef = useRef<HTMLDivElement | null>(null);
@@ -15,6 +21,8 @@ export const Login = () => {
 		width: '70%',
 		margin: '5px 0px',
 	};
+	if (props.href !== Guide.currentPath)
+		return null;
 	return (
 		<div className="authPanel">
 			<div ref={signInRef} className="login">
@@ -22,17 +30,22 @@ export const Login = () => {
 				<TextField value={signInName} onChange={e => setSignInName(e.target.value)} style={textStyles} label="Username" />
 				<TextField value={signInPass} onChange={e => setSignInPass(e.target.value)} style={textStyles} label="Password" />
 				<Button onClick={async (e) => {
-					let resp = await fetch('http://localhost:8000/auth/login', {
+					let resp = await (await fetch('http://localhost:8000/auth/login', {
 						method: "POST",
 						headers: {
 							'Content-Type': 'application/json'
 						},
+						credentials: 'include',
 						body: JSON.stringify({ username: signInName, password: signInPass })
-					})
+					})).json();
+					if (resp.status !== 200) {
+						Guide.changePath("/home");
+					} else alert("Unable to login.");
 					console.log(resp);
 					console.log("SENDING FOR HOME...");
 					let resp2 = await fetch('http://localhost:8000/api/home', {
 						method: "GET",
+						credentials: 'include',
 					});
 					console.log(resp2);
 				}} style={{ margin: '30px 0px' }} size="small" variant="outlined" color="primary" children="sign in" />
@@ -67,7 +80,6 @@ export const Login = () => {
 								console.log(ele.nodeType)
 								return (ele as HTMLDivElement).tagName === 'DIV';
 							});
-							// console.log(childDivs[0].textContent);
 							const file = fileRef.current.files[0];
 							console.log(fileRef.current.files);
 							(async () => {

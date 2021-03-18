@@ -18,7 +18,7 @@ const signup = async (req,res) => {
                 console.log(err);
                 res.status(500).json({err : "An internal server error occurred."});
                 }
-            else res.redirect('/auth/login');
+            else res.status(200).json({status : "Successfully Registered."});
         })
     } catch (e) {
         console.log(res.status,e.message);
