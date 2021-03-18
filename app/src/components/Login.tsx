@@ -30,24 +30,40 @@ export const Login = (props: toLogin) => {
 				<TextField value={signInName} onChange={e => setSignInName(e.target.value)} style={textStyles} label="Username" />
 				<TextField value={signInPass} onChange={e => setSignInPass(e.target.value)} style={textStyles} label="Password" />
 				<Button onClick={async (e) => {
-					let resp = await (await fetch('http://localhost:8000/auth/login', {
+					let headers = null;
+					let resp = await fetch('http://localhost:8000/auth/login', {
 						method: "POST",
 						headers: {
 							'Content-Type': 'application/json'
 						},
 						credentials: 'include',
 						body: JSON.stringify({ username: signInName, password: signInPass })
-					})).json();
-					if (resp.status !== 200) {
+					}).then(res => {
+						if (res.status !== 200) {
+							return Promise.resolve(null);
+						} else {
+							headers = res.headers;
+							return res.blob()
+						}
+					});
+
+					if (resp !== null) {
+						console.log(resp, headers);
+						let username = 'Anonymous'
+						if (headers !== null) {
+							for (let [ik, ival] of (headers as any).entries()) {
+								console.log(ik, ival);
+								if (ik === 'username')
+									username = ival;
+							}
+						}
+						const image_url = URL.createObjectURL(resp);
+						console.log(image_url, username);
+						localStorage.setItem('image_url', image_url);
+						localStorage.setItem('username', username);
+						Guide.setUser(username, image_url);
 						Guide.changePath("/home");
 					} else alert("Unable to login.");
-					console.log(resp);
-					console.log("SENDING FOR HOME...");
-					let resp2 = await fetch('http://localhost:8000/api/home', {
-						method: "GET",
-						credentials: 'include',
-					});
-					console.log(resp2);
 				}} style={{ margin: '30px 0px' }} size="small" variant="outlined" color="primary" children="sign in" />
 			</div>
 			<div ref={signUpRef} className="signup">
