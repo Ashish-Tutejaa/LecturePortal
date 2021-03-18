@@ -1,5 +1,6 @@
 const home = async (req,res) => {
     console.log('HEREE', req.user);
+    console.log(req.cookies);
     if(!req.isAuthenticated())
         {
         console.log("Login first");
