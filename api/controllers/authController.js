@@ -18,7 +18,7 @@ const signup = async (req,res) => {
                 console.log(err);
                 res.status(500).json({err : "An internal server error occurred."});
                 }
-            else res.redirect('/auth/login');
+            else res.status(200).json({status : "Successfully Registered."});
         })
     } catch (e) {
         console.log(res.status,e.message);
@@ -29,7 +29,10 @@ const signup = async (req,res) => {
 const login = async (req,res) => {
     console.log('Successfully logged in');
     console.log(req.user);
-    res.status(200).json({status : "Successfully Logged In."});
+    // console.log(Buffer.from(req.user.id_image.buffer));
+    res.set('Access-Control-Expose-Headers', 'Username');
+    res.set('Username', req.user.username);
+    res.status(200).send(Buffer.from(req.user.id_image));
 }
 
 const logout = async (req,res) => {

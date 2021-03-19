@@ -1,7 +1,13 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useContext } from 'react';
 import { TextField, Button } from '@material-ui/core';
+import { GuidingContext } from '../Navigator';
 
-export const Login = () => {
+interface toLogin {
+	href: string;
+}
+
+export const Login = (props: toLogin) => {
+	const Guide = useContext(GuidingContext);
 	const fileRef = useRef<HTMLInputElement | null>(null);
 	const signInRef = useRef<HTMLDivElement | null>(null);
 	const signUpRef = useRef<HTMLDivElement | null>(null);
@@ -15,6 +21,8 @@ export const Login = () => {
 		width: '70%',
 		margin: '5px 0px',
 	};
+	if (props.href !== Guide.currentPath)
+		return null;
 	return (
 		<div className="authPanel">
 			<div ref={signInRef} className="login">
@@ -22,19 +30,40 @@ export const Login = () => {
 				<TextField value={signInName} onChange={e => setSignInName(e.target.value)} style={textStyles} label="Username" />
 				<TextField value={signInPass} onChange={e => setSignInPass(e.target.value)} style={textStyles} label="Password" />
 				<Button onClick={async (e) => {
+					let headers = null;
 					let resp = await fetch('http://localhost:8000/auth/login', {
 						method: "POST",
 						headers: {
 							'Content-Type': 'application/json'
 						},
+						credentials: 'include',
 						body: JSON.stringify({ username: signInName, password: signInPass })
-					})
-					console.log(resp);
-					console.log("SENDING FOR HOME...");
-					let resp2 = await fetch('http://localhost:8000/api/home', {
-						method: "GET",
+					}).then(res => {
+						if (res.status !== 200) {
+							return Promise.resolve(null);
+						} else {
+							headers = res.headers;
+							return res.blob()
+						}
 					});
-					console.log(resp2);
+
+					if (resp !== null) {
+						console.log(resp, headers);
+						let username = 'Anonymous'
+						if (headers !== null) {
+							for (let [ik, ival] of (headers as any).entries()) {
+								console.log(ik, ival);
+								if (ik === 'username')
+									username = ival;
+							}
+						}
+						const image_url = URL.createObjectURL(resp);
+						console.log(image_url, username);
+						localStorage.setItem('image_url', image_url);
+						localStorage.setItem('username', username);
+						Guide.setUser(username, image_url);
+						Guide.changePath("/home");
+					} else alert("Unable to login.");
 				}} style={{ margin: '30px 0px' }} size="small" variant="outlined" color="primary" children="sign in" />
 			</div>
 			<div ref={signUpRef} className="signup">
@@ -67,7 +96,6 @@ export const Login = () => {
 								console.log(ele.nodeType)
 								return (ele as HTMLDivElement).tagName === 'DIV';
 							});
-							// console.log(childDivs[0].textContent);
 							const file = fileRef.current.files[0];
 							console.log(fileRef.current.files);
 							(async () => {

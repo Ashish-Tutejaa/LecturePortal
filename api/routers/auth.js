@@ -13,7 +13,7 @@ const router = express.Router();
 router.post('/signup',upload.single('buffer'), authController.signup);
 
 //POST  /auth/login PUBLIC
-router.post('/login', passport.authenticate('local',{failureRedirect:'/home/failed'}), authController.login)
+router.post('/login', passport.authenticate('local'), authController.login)
 
 //GET /auth/logout PUBLIC
 router.get('/logout', authController.logout);
