@@ -19,6 +19,9 @@ const Guide = (props: { children: (any[] | any) }) => {
                 image: localStorage.getItem('image_url') as string,
             })
         }
+        // return () => {
+        //     URL.revokeObjectURL(userInfo.image);
+        // }
     }, []);
 
     useEffect(() => {
