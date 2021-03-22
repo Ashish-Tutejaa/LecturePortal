@@ -7,6 +7,7 @@ interface toLogin {
 }
 
 export const Login = (props: toLogin) => {
+	const [checkLogin, setCheckLogin] = useState<number>(0);
 	const Guide = useContext(GuidingContext);
 	const fileRef = useRef<HTMLInputElement | null>(null);
 	const signInRef = useRef<HTMLDivElement | null>(null);

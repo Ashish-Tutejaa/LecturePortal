@@ -4,7 +4,6 @@ require('dotenv').config();
 //EXPRESS SETUP
 const express = require('express');
 const app = express();
-console.log(process.env);
 //MONGO SETUP
 // Connecting to Database
 const mongoose = require('mongoose');

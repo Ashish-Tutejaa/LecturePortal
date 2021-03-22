@@ -1,6 +1,12 @@
 const studentModel = require('../models/student');
 
-console.log('pge loaded.')
+const isloggedin = async (req,res) => {
+    if(req.user){
+        res.status(200).json({loggedIn : true});
+    } else {
+        res.status(400).json({loggedIn : false});
+    }
+}
 
 const signup = async (req,res) => {
     try {
@@ -29,15 +35,19 @@ const signup = async (req,res) => {
 const login = async (req,res) => {
     console.log('Successfully logged in');
     console.log(req.user);
-    // console.log(Buffer.from(req.user.id_image.buffer));
     res.set('Access-Control-Expose-Headers', 'Username');
     res.set('Username', req.user.username);
     res.status(200).send(Buffer.from(req.user.id_image));
 }
 
 const logout = async (req,res) => {
-    req.logout();
-    res.send("LOGED OUT SUCCESSFully")
+    try{
+        req.logout();
+        res.status(200).json({status : "Logged Out Successfully."});
+    } catch(err){
+        console.log(err);
+        res.status(500).json({err});
+    }
 }
 
 module.exports = {
