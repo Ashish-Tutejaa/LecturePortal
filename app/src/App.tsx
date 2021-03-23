@@ -1,16 +1,25 @@
-import React from 'react';
-import { Login } from './components/Login'
-import { Home } from './components/Home'
+import React, { useContext } from 'react';
+import { Login, toLogin } from './components/Login';
+import { Home, toHome } from './components/Home';
+import IsLoggedIn from './components/IsLoggedIn';
 import './App.css';
-import Guide from './Navigator';
+import { GuidingContext } from './Navigator';
 
 const App = () => {
-  return <Guide>
-    <div className='body-wrapper'>
-      <Login href="/" />
-      <Home href="/home" />
-    </div>
-  </Guide>
+
+  const GuideCtx = useContext(GuidingContext);
+
+  const pages: { [prop: string]: (props: any) => JSX.Element | null } = {
+    "/": Home
+  }
+
+  const ToRender = pages[GuideCtx.currentPath.path];
+
+  return <div className='body-wrapper'>
+    <IsLoggedIn>
+      <ToRender />
+    </IsLoggedIn>
+  </div>
 
 }
 

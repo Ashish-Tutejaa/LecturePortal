@@ -1,9 +1,9 @@
-import React, { useRef, useState, useContext } from 'react';
+import React, { useRef, useState, useContext, useEffect } from 'react';
 import { TextField, Button } from '@material-ui/core';
 import { GuidingContext } from '../Navigator';
 
-interface toLogin {
-	href: string;
+export interface toLogin {
+
 }
 
 export const Login = (props: toLogin) => {
@@ -22,8 +22,7 @@ export const Login = (props: toLogin) => {
 		width: '70%',
 		margin: '5px 0px',
 	};
-	if (props.href !== Guide.currentPath)
-		return null;
+
 	return (
 		<div className="authPanel">
 			<div ref={signInRef} className="login">
@@ -31,40 +30,23 @@ export const Login = (props: toLogin) => {
 				<TextField value={signInName} onChange={e => setSignInName(e.target.value)} style={textStyles} label="Username" />
 				<TextField value={signInPass} onChange={e => setSignInPass(e.target.value)} style={textStyles} label="Password" />
 				<Button onClick={async (e) => {
-					let headers = null;
-					let resp = await fetch('http://localhost:8000/auth/login', {
+					let resp = await fetch('http://localhost:8000/auth/signin', {
 						method: "POST",
 						headers: {
 							'Content-Type': 'application/json'
 						},
 						credentials: 'include',
 						body: JSON.stringify({ username: signInName, password: signInPass })
-					}).then(res => {
-						if (res.status !== 200) {
-							return Promise.resolve(null);
-						} else {
-							headers = res.headers;
-							return res.blob()
-						}
-					});
+					}).then(res => res.json());
 
-					if (resp !== null) {
-						console.log(resp, headers);
-						let username = 'Anonymous'
-						if (headers !== null) {
-							for (let [ik, ival] of (headers as any).entries()) {
-								console.log(ik, ival);
-								if (ik === 'username')
-									username = ival;
-							}
-						}
-						const image_url = URL.createObjectURL(resp);
-						console.log(image_url, username);
-						localStorage.setItem('image_url', image_url);
-						localStorage.setItem('username', username);
-						Guide.setUser(username, image_url);
-						Guide.changePath("/home");
-					} else alert("Unable to login.");
+					if (resp.err) alert(resp.err);
+					else {
+						const { token } = resp;
+						localStorage.setItem('token', token);
+						Guide.changePath('/');
+					}
+
+
 				}} style={{ margin: '30px 0px' }} size="small" variant="outlined" color="primary" children="sign in" />
 			</div>
 			<div ref={signUpRef} className="signup">
@@ -103,13 +85,17 @@ export const Login = (props: toLogin) => {
 								let buffer = await file.arrayBuffer();
 								let blob = new Blob([buffer]);
 								const formData = new FormData();
-								formData.append('uname', signUpuName);
-								formData.append('pass', signUpPass);
+								formData.append('username', signUpuName);
+								formData.append('password', signUpPass);
 								formData.append('buffer', blob);
 								fetch(`http://localhost:8000/auth/signup`, {
 									method: 'POST',
 									body: formData,
-								});
+								}).then(res => res.json()).then(res => {
+									if (res.err) {
+										alert(res.err);
+									}
+								})
 							})();
 						}
 					}}

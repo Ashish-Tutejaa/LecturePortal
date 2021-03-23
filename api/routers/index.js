@@ -9,7 +9,7 @@ const seeMe = (uid) => {
 }
 
 Router.use('/auth', seeMe(1),require('./auth.js'));
-Router.use('/image', seeMe(2),require('./image.js'));
-Router.use('/api', seeMe(3), require('./singlePages.js'));
+// Router.use('/image', seeMe(2),require('./image.js'));
+// Router.use('/api', seeMe(3), require('./singlePages.js'));
 
 module.exports = Router;

@@ -1,7 +1,6 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const passport = require('passport');
 const multer = require('multer');
+const {AUTH} = require('../middleware');
 var upload = multer();
 
 //CONTROLLER
@@ -13,9 +12,15 @@ const router = express.Router();
 router.post('/signup',upload.single('buffer'), authController.signup);
 
 //POST  /auth/login PUBLIC
-router.post('/login', passport.authenticate('local'), authController.login)
+router.post('/signin', authController.signin)
 
 //GET /auth/logout PUBLIC
-router.get('/logout', authController.logout);
+router.get('/signout', authController.signout);
+
+//GET /auth/isloggedin PRIVATE
+router.get('/userinfo', AUTH, authController.userinfo);
+
+//GET /auth/refresh PUBLIC
+router.get('/refresh', authController.refresh)
 
 module.exports = router;
