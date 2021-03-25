@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const axios = require('axios');
-const userModel = require('../models/student');
+const userModel = require('../models/childModel');
 
 //CONTROLLER
 const imageController = require('../controllers/imageController.js');

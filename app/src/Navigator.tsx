@@ -1,36 +1,27 @@
 import React, { useEffect, useState } from 'react';
+const def = 'default';
 
-export const GuidingContext = React.createContext<any>("/");
+export const GuidingContext = React.createContext<{ currentPath: { path: string }, changePath: ((prop: string) => void) }>({ currentPath: { path: "/" }, changePath: ((def) => { console.log('you\'re in default') }) });
+
 const Guide = (props: { children: (any[] | any) }) => {
-    const [currentPath, setCurrentPath] = useState(window.location.pathname);
-    const [userInfo, setUserInfo] = useState<{ username: string, image: string }>({ username: "Anonymous", image: "none" });
+    const [currentPath, setCurrentPath] = useState({ path: window.location.pathname });
+
     const changePath: (arg: string) => void = (newPath: string) => {
-        setCurrentPath(newPath);
+        console.log('changing paths...');
+        setCurrentPath({ path: newPath });
         window.history.pushState("", "", newPath);
     }
-    const setUser = (username: string, image: string) => {
-        setUserInfo({ username, image });
-    }
-
-    useEffect(() => {
-        if (localStorage.getItem('username') && localStorage.getItem('image_url')) {
-            setUserInfo({
-                username: localStorage.getItem('username') as string,
-                image: localStorage.getItem('image_url') as string,
-            })
-        }
-        // return () => {
-        //     URL.revokeObjectURL(userInfo.image);
-        // }
-    }, []);
 
     useEffect(() => {
         window.onpopstate = () => {
-            changePath(window.location.pathname);
+            setCurrentPath({ path: window.location.pathname });
         }
     }, [])
+
+    console.log('changing here...');
+
     return (
-        <GuidingContext.Provider value={{ currentPath, changePath, userInfo, setUser }}>
+        <GuidingContext.Provider value={{ currentPath, changePath }}>
             {props.children}
         </GuidingContext.Provider>
     );
