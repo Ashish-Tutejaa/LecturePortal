@@ -3,8 +3,7 @@ import { GuidingContext } from '../Navigator'
 import { styled, makeStyles } from '@material-ui/core/styles';
 import { AppBar } from '@material-ui/core';
 import { flex } from '../styles';
-import DeviceSelect from './DeviceSelect';
-import VideoFeed from './VideoFeed';
+import Decider from './Decider';
 
 export interface toHome {
 
@@ -43,6 +42,8 @@ export const Home = (props: toHome) => {
     const [devices, setDevices] = useState<Array<MediaDeviceInfo | InputDeviceInfo>>([]);
     const [selectedDeviceID, setSelectedDeviceID] = useState<string | undefined>(undefined);
     const [userInfo, setUserInfo] = useState<{ image: string, username: string }>({ image: "", username: "" });
+    const [lecture, setLecture] = useState<null | { [props: string]: string }>(null);
+
     const classes = useStyles();
     const Guide = useContext(GuidingContext);
     const flexStyle = flex({});
@@ -74,22 +75,33 @@ export const Home = (props: toHome) => {
                 },
             }).then(res => res.json());
             console.log(res);
+
+            //getting latest lecture
+            let res1 = await fetch('http://localhost:8000/api/current-lecture', {
+                method: "GET",
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+            }).then(res => res.json());
+            console.log(res1);
+
+            if(Object.keys(res1).length > 0){
+                setLecture({
+                    ...res1.lecture
+                })
+            }
+            
+            let arr = res.loggedIn.image.data;
+            let narr = new Uint8Array(arr);
+            let blob = new Blob([narr]);
+            let objectUrl = URL.createObjectURL(blob);
+            setUserInfo({
+                image: objectUrl,
+                username: res.loggedIn.username
+            });
+
         })();
 
-        (async () => {
-            if ('mediaDevices' in window.navigator && 'getUserMedia' in window.navigator.mediaDevices) {
-                try {
-                    let permission = await navigator.mediaDevices.getUserMedia({ video: true });
-                    console.log(permission);
-                    navigator.mediaDevices.enumerateDevices().then(res => {
-                        console.log(res);
-                        setDevices(res);
-                    });
-                } catch (err) {
-                    alert(err);
-                }
-            }
-        })();
     }, []);
 
     return <StyledWrapper className={WrapperFlex.flex}>
@@ -102,11 +114,11 @@ export const Home = (props: toHome) => {
 
         </StyledAppBar>
         <h1>Welcome Home</h1>
-        <DeviceSelect idSetter={setSelectedDeviceID} devices={devices} />
-        <VideoFeed id={selectedDeviceID} />
-        <iframe style={{ margin: '30px 0px' }} width="500" height="500" src="https://www.youtube.com/embed/vOXZkm9p_zY"
-            frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen></iframe>
+
+        {lecture ? <>
+            <Decider end={new Date(lecture.end)} start={new Date(lecture.start)} url={lecture.src} id={lecture._id} />
+        </> : <h1>No Lectures Scheduled</h1>}
+
         <AppBar style={{ background: '#0d3d6d', height: "15px" }} position='static'></AppBar>
     </StyledWrapper>
 }

@@ -32,7 +32,7 @@ app.get('/improtected', AUTH, (req,res) => {
 	res.status(200).end();
 })
 
-app.use('/', CORS , require('./routers/index'));
+app.use('/', CORS , require('./routers'));
 
 app.listen(port, () => 
 	console.log(`listening@${port}`));

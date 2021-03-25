@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 
-interface toDeviceSelect {
+export interface toDeviceSelect {
     devices: Array<MediaDeviceInfo | InputDeviceInfo>,
     idSetter: React.Dispatch<React.SetStateAction<string | undefined>>,
 }

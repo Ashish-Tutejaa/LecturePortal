@@ -6,12 +6,19 @@ const jwt = require('jsonwebtoken');
 const fetch = require("node-fetch");
 // const JSON = require("json");
 const userinfo = async (req,res) => {
-    console.log(req.user);
-    console.log(req.cookies);
-    if(req.user){
-        res.status(200).json({loggedIn : req.user});
-    } else {
-        res.status(401).json({err : "no such user found"});
+    try{
+        console.log(req.user);
+        console.log(req.cookies);
+        if(req.user){
+            let curUser = await childModel.findOne({_id : req.user.id});
+            let {image,username} = curUser; 
+            res.status(200).json({loggedIn : {image, username}});
+        } else {
+            res.status(401).json({err : "no such user found"});
+        }
+    } catch(err){
+        console.log(err);
+        res.status(500).json({err});
     }
 }
 

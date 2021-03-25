@@ -1,16 +1,16 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { CSSProperties } from 'react';
 
-interface toVideoFeed {
+export interface toVideoFeed {
     id: string | undefined,
+    canvasRef : React.MutableRefObject<HTMLCanvasElement | null>,
+    vidRef : React.MutableRefObject<HTMLVideoElement | null>
+
 }
 
-const VideoFeed: (props: toVideoFeed) => JSX.Element = ({ id }) => {
+const VideoFeed: (props: toVideoFeed) => JSX.Element = ({ id, canvasRef, vidRef }) => {
 
     const [src, setSrc] = useState<MediaStream | null>(null);
-    const vidRef = useRef<HTMLVideoElement | null>(null);
     const imgRef = useRef<HTMLImageElement | null>(null);
-    const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     useEffect(() => {
         console.log(vidRef.current);
@@ -18,9 +18,6 @@ const VideoFeed: (props: toVideoFeed) => JSX.Element = ({ id }) => {
             vidRef.current.srcObject = src;
             vidRef.current.play();
         }
-        // let timer = setInterval(() => {
-
-        // }, 5000);
     }, [src]);
 
     const askPermission = async () => {
