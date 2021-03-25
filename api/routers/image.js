@@ -14,5 +14,8 @@ router.post('/detect', imageController.detect);
 //GET /image/getUserImage PROTECTED
 router.get('/getUserImage', imageController.get);
 
+//POST /image/verify PROTECTED
+router.post('/verify',imageController.verify);
+
 
 module.exports = router;

@@ -1,4 +1,8 @@
 const studentModel = require('../models/childModel.js');
+const axios = require('axios');
+const fetch = require("node-fetch");
+const OCP_KEY = process.env.OCIM_KEY;
+const END_POINT = process.env.END_POINT;
 
 const get = async (req,res) => {
     try{
@@ -17,8 +21,7 @@ const get = async (req,res) => {
 const detect = async (req, res) => {
 	try{
 		let buffer = req.body;
-		const OCP_KEY = process.env.OCIM_KEY;
-		const END_POINT = process.env.END_POINT;
+		
 		axios({
 			method: 'POST',
 			url: END_POINT,
@@ -39,12 +42,77 @@ const detect = async (req, res) => {
 				res.status(500).json({err : "An internal server error occurred."});
 			});
 	} catch(err){
+		console.log(err);
 		res.status(500).json({err});
 	}
 
 }
 
+const verify = async (req,res)=>{
+
+	try{
+		const faceId1 = req.cookies['faceId'];
+
+		let user = await studentModel.findOne({username : req.body.username});
+		const data = user.image; //req.file
+		
+		let rececntFaceId =   await fetch('http://localhost:8000/image/detect',
+			{  method: 'POST',
+				headers: {
+					'Content-Type': 'application/octet-stream'
+				},
+				body:data,
+			}).then((res)=>{
+				
+				return res.json();
+			}).catch((err)=>{
+				console.log(err);
+
+			});
+		
+		faceId2 = rececntFaceId.response[0].faceId;
+
+		const endpoint = 'eastus.api.cognitive.microsoft.com'; 
+		const ifMatched = await axios.post(
+			`https://${endpoint}/face/v1.0/verify`,{
+              faceId1,
+              faceId2
+            }, { 
+            headers:{
+                'Ocp-Apim-Subscription-Key':OCP_KEY,
+                'Content-type':'application/json',
+            },  
+            }
+			).then(res1 => {
+				console.log('RES');
+				console.log(res1);
+				return res1;
+			})
+			.catch(err1 => {
+				throw(err1);
+				
+			});
+            
+		
+		if(ifMatched.data.isIdentical)
+		{
+			res.status(200).json({success:true});
+		} 
+		else
+		{
+			res.status(200).json({success:false});
+		}
+	}catch(err)
+	{
+		console.log(err.code,err.message);
+		res.send(err);
+	}
+	
+
+}
+
 module.exports = {
     detect,
-    get
+    get,
+	verify
 }

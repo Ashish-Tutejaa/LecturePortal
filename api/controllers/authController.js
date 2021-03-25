@@ -3,7 +3,8 @@ const tokenModel = require('../models/tokenModel');
 const {gen_token} = require('../middleware');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
+const fetch = require("node-fetch");
+// const JSON = require("json");
 const userinfo = async (req,res) => {
     console.log(req.user);
     console.log(req.cookies);
@@ -55,12 +56,37 @@ const signin = async (req,res) => {
 
         let tempToken = new tokenModel({token : refreshToken});
         await tempToken.save();
+        
+        //Saving FaceId Cookie Daily During Signin
+        const data = user.image;
+        // console.log(user.image);
+        const imageDetectResponse = await fetch('http://localhost:8000/image/detect',
+         {  method: 'POST',
+            headers: {
+                'Content-Type': 'application/octet-stream'
+            },
+            body:data,
+        }).then((res)=>{
+            return res.json();
+        }).catch((err)=>{
+            console.log(err);
+
+        });
+
+        const faceId  = imageDetectResponse.response[0].faceId;
+        res.cookie('faceId',faceId,{
+            httpOnly : true,
+            path : '/',
+            maxAge : 86400 * 1000,
+        });
 
         res.cookie('rid',refreshToken,{
             httpOnly : true,
             path : '/',
             maxAge : 86400 * 1000,
         });
+
+        
         res.status(200).json({token : accessToken});
     } catch(err){
         console.log(err);
