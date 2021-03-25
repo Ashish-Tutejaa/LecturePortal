@@ -7,15 +7,21 @@ interface toVideoFeed {
 
 const VideoFeed: (props: toVideoFeed) => JSX.Element = ({ id }) => {
 
-    const [src, setSrc] = useState<MediaStream | undefined>(undefined);
-    const vidRef = useRef<HTMLVideoElement | undefined>(undefined);
+    const [src, setSrc] = useState<MediaStream | null>(null);
+    const vidRef = useRef<HTMLVideoElement | null>(null);
+    const imgRef = useRef<HTMLImageElement | null>(null);
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     useEffect(() => {
+        console.log(vidRef.current);
+        if (vidRef.current !== null) {
+            vidRef.current.srcObject = src;
+            vidRef.current.play();
+        }
         // let timer = setInterval(() => {
 
         // }, 5000);
-    },
-        []);
+    }, [src]);
 
     const askPermission = async () => {
         console.log('requesting permission');
@@ -33,11 +39,24 @@ const VideoFeed: (props: toVideoFeed) => JSX.Element = ({ id }) => {
         askPermission();
     }, [id]);
 
-    let videoStyles = { position: 'absolute', top: '50px', right: '50px', height: '200px', width: '200px' }
+    let videoStyles = { position: 'absolute' as 'absolute', top: '50px', right: '50px', height: '200px', width: '200px' }
 
 
     return <>
-        {src && <video style={videoStyles as CSSProperties}></video>}
+        {src && <video ref={vidRef} style={{ ...videoStyles }}></video>}
+        <canvas style={{ display: 'none' }} ref={canvasRef}></canvas>
+        <img style={{ ...videoStyles, top: '270px' }} ref={imgRef} />
+        <button style={{ ...videoStyles, height: '50px', width: '100px', top: '500px' }} onClick={() => {
+            if (imgRef.current && canvasRef.current && vidRef.current) {
+                let canvas = canvasRef.current;
+                let vid = vidRef.current;
+                let img = imgRef.current;
+                canvas.width = vid.videoWidth;
+                canvas.height = vid.videoHeight;
+                canvas.getContext('2d')?.drawImage(vid, 0, 0);
+                img.src = canvas.toDataURL('image/webp');
+            }
+        }}>Screenshot</button>
     </>
 }
 
